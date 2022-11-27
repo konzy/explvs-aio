@@ -33,7 +33,7 @@ public class FiremakingActivity extends Activity {
                 new ItemReq(log.NAME, 1)
         };
 
-        bankNode = new ItemReqBanking(itemReqs);
+        bankNode = new ItemReqBanking(this, itemReqs);
     }
 
     @Override

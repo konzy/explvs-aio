@@ -3,7 +3,10 @@ package activities.money_making;
 public enum MoneyMakingType {
 
     FLAX_PICKING("Flax picking"),
-    VIAL_FILLING("Vial filling");
+    VIAL_FILLING("Vial filling"),
+    IDLING("Idling"),
+    TANNING("Tanning"),
+    SHOPPING("Shopping");
 
     String name;
 

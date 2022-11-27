@@ -11,13 +11,13 @@ public enum FishingLocation {
     PORT_SARIM(new Location("Port Sarim", new Area(2985, 3174, 2988, 3178))),
     AL_KHARID(new Location("Al Kharid", new Area(
             new int[][]{
-                    {3265, 3151},
-                    {3269, 3151},
-                    {3279, 3140},
-                    {3276, 3137},
-                    {3263, 3148}
+                    { 3276, 3136 },
+                    { 3280, 3139 },
+                    { 3269, 3151 },
+                    { 3263, 3148 }
             }
     ))),
+
     CATHERBY(new Location("Catherby", new Area(
             new int[][]{
                     {2835, 3434},
@@ -36,14 +36,11 @@ public enum FishingLocation {
     ))),
     BARBARIAN_VILLAGE(new Location("Barbarian Village", new Area(
             new int[][]{
-                    {3102, 3422},
-                    {3102, 3428},
-                    {3106, 3432},
-                    {3106, 3436},
-                    {3111, 3436},
-                    {3111, 3430},
-                    {3106, 3425},
-                    {3106, 3422}
+                    { 3105, 3422 },
+                    { 3100, 3422 },
+                    { 3100, 3432 },
+                    { 3107, 3439 },
+                    { 3113, 3434 }
             }
     ))),
     LUMBRIDGE(new Location("Lumbridge", new Area(3238, 3239, 3241, 3255))),

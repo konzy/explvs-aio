@@ -4,6 +4,8 @@ import org.osbot.rs07.api.ui.MagicSpell;
 import org.osbot.rs07.api.ui.Spells;
 import util.item_requirement.ItemReq;
 
+import java.util.List;
+
 public enum Spell {
     /*HOME_TELEPORT(Spells.NormalSpells.HOME_TELEPORT),
     WIND_STRIKE(Spells.NormalSpells.WIND_STRIKE, new ItemReq(Rune.AIR.toString(), 1), new ItemReq(Rune.MIND.toString(), 1)),
@@ -19,7 +21,7 @@ public enum Spell {
     WIND_BOLT(Spells.NormalSpells.WIND_BOLT),
     CURSE(Spells.NormalSpells.CURSE),
     BIND(Spells.NormalSpells.BIND),*/
-    LOW_LEVEL_ALCHEMY(Spells.NormalSpells.LOW_LEVEL_ALCHEMY, SpellType.ALCH, new ItemReq(Rune.FIRE.toString(), 3), new ItemReq(Rune.NATURE.toString(), 1));
+    LOW_LEVEL_ALCHEMY("Low Level Alchemy", Spells.NormalSpells.LOW_LEVEL_ALCHEMY, SpellTarget.ITEM, new ItemReq(Rune.FIRE.toString(), 3), new ItemReq(Rune.NATURE.toString(), 1).setStackable()),
     /*WATER_BOLT(Spells.NormalSpells.WATER_BOLT),
     VARROCK_TELEPORT(Spells.NormalSpells.VARROCK_TELEPORT),
     LVL_2_ENCHANT(Spells.NormalSpells.LVL_2_ENCHANT),
@@ -39,9 +41,9 @@ public enum Spell {
     SNARE(Spells.NormalSpells.SNARE),
     MAGIC_DART(Spells.NormalSpells.MAGIC_DART),
     ARDOUGNE_TELEPORT(Spells.NormalSpells.ARDOUGNE_TELEPORT),
-    EARTH_BLAST(Spells.NormalSpells.EARTH_BLAST),
-    HIGH_LEVEL_ALCHEMY(Spells.NormalSpells.HIGH_LEVEL_ALCHEMY, new ItemReq(Rune.FIRE.toString(), 5), new ItemReq(Rune.NATURE.toString(), 1)),
-    CHARGE_WATER_ORB(Spells.NormalSpells.CHARGE_WATER_ORB),
+    EARTH_BLAST(Spells.NormalSpells.EARTH_BLAST),*/
+    HIGH_LEVEL_ALCHEMY("High Level Alchemy", Spells.NormalSpells.HIGH_LEVEL_ALCHEMY, SpellTarget.ITEM, new ItemReq(Rune.FIRE.toString(), 5).setStackable(), new ItemReq(Rune.NATURE.toString(), 1).setStackable());
+    /*CHARGE_WATER_ORB(Spells.NormalSpells.CHARGE_WATER_ORB),
     LVL_4_ENCHANT(Spells.NormalSpells.LVL_4_ENCHANT),
     WATCHTOWER_TELEPORT(Spells.NormalSpells.WATCHTOWER_TELEPORT),
     FIRE_BLAST(Spells.NormalSpells.FIRE_BLAST),
@@ -77,13 +79,36 @@ public enum Spell {
     LVL_7_ENCHANT(Spells.NormalSpells.LVL_7_ENCHANT),
     FIRE_SURGE(Spells.NormalSpells.FIRE_SURGE);*/
 
-    private MagicSpell spell;
-    private SpellType spellType;
-    private ItemReq[] itemReqs;
+    String name;
+    Spells.NormalSpells spell;
+    SpellTarget spellTarget;
+    ItemReq[] itemReqs;
 
-    Spell(final MagicSpell spell, final SpellType spellType, final ItemReq... itemReqs) {
+    Spell(final String name, final Spells.NormalSpells spell, final SpellTarget spellTarget, final ItemReq... itemReqs) {
+        this.name = name;
         this.spell = spell;
-        this.spellType = spellType;
+        this.spellTarget = spellTarget;
         this.itemReqs = itemReqs;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    public Spells.NormalSpells getSpell() {
+        return spell;
+    }
+
+    public ItemReq[] getItemReqs() {
+        return itemReqs;
+    }
+
+    public SpellTarget getSpellTarget() {
+        return spellTarget;
     }
 }

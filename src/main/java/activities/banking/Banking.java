@@ -1,6 +1,10 @@
 package activities.banking;
 
 import org.osbot.rs07.api.map.Area;
+import org.osbot.rs07.api.map.Position;
+import org.osbot.rs07.api.model.Entity;
+import org.osbot.rs07.api.ui.RS2Widget;
+import org.osbot.rs07.event.WebWalkEvent;
 import util.Sleep;
 import util.executable.BlockingExecutable;
 
@@ -9,6 +13,8 @@ import java.util.stream.Stream;
 public abstract class Banking extends BlockingExecutable {
 
     private static final Area[] ALL_BANK_AND_DEPOSIT_BOX_AREAS = Stream.concat(Stream.of(Bank.AREAS), Stream.of(DepositBox.AREAS)).toArray(Area[]::new);
+    private static Position[] ALL_BANK_AND_DEPOSIT_BOX_POSITIONS = Stream.concat(Stream.of(Bank.POSITIONS), Stream.of(DepositBox.POSITIONS)).toArray(Position[]::new);
+
 
     private final boolean useDepositBoxes;
 
@@ -18,7 +24,6 @@ public abstract class Banking extends BlockingExecutable {
     }
 
     private BankType currentBankType;
-    private boolean finishedBanking;
 
     public Banking() {
         this.useDepositBoxes = false;
@@ -28,32 +33,23 @@ public abstract class Banking extends BlockingExecutable {
         this.useDepositBoxes = useDepositBoxes;
     }
 
-    /**
-     * Override BlockingExecutable::setFinished
-     * to prevent finishing immediately upon a super class
-     * setFinished() call. We need to ensure that the bank is closed
-     * before we end the executable.
-     */
-    @Override
-    public void setFinished() {
-        finishedBanking = true;
-    }
-
     @Override
     public void blockingRun() throws InterruptedException {
-        if (finishedBanking) {
-            if (isBankOpen()) {
-                closeBank();
-            } else {
-                super.setFinished();
+        if (!playerInBank()) {
+            getWidgets().closeOpenInterface();
+            if (!walkToBank()) {
+                logger.debug("We failed to webwalk, great...");
             }
-        } else if (!playerInBank()) {
-            walkToBank();
         } else if (getInventory().contains("Coin pouch")) {
             getInventory().getItem("Coin pouch").interact();
         } else if (!isBankOpen()) {
             openBank();
         } else {
+            if (firstTimeBanking()) {
+                sleep(random(500, 1000));
+                firstTimeBankingWidget().interact();
+                sleep(random(500, 1000));
+            }
             if (getBank() != null && getBank().isOpen()) {
                 currentBankType = BankType.BANK;
             } else {
@@ -64,18 +60,60 @@ public abstract class Banking extends BlockingExecutable {
         }
     }
 
-    private boolean playerInBank() {
-        if (useDepositBoxes) {
-            return Stream.of(ALL_BANK_AND_DEPOSIT_BOX_AREAS).anyMatch(area -> area.contains(myPosition()));
-        }
-        return Stream.of(Bank.AREAS).anyMatch(area -> area.contains(myPosition()));
+    private RS2Widget firstTimeBankingWidget() {
+        return getWidgets().get(664, 29);
     }
 
-    private boolean walkToBank() {
-        if (useDepositBoxes) {
-            return getWalking().webWalk(ALL_BANK_AND_DEPOSIT_BOX_AREAS);
+    private boolean firstTimeBanking() {
+        return firstTimeBankingWidget() != null;
+    }
+
+    public boolean playerInBank() {
+        if (myPlayer() != null & myPlayer().getPosition() != null) {
+            Entity closestBank;
+            if (currentBankType == BankType.BANK)
+                closestBank = getBank().closest();
+            else closestBank = getObjects().closest("Bank deposit box");
+            return Stream.of(Bank.AREAS).anyMatch(area -> area.contains(myPosition())) ||
+                    (closestBank != null && closestBank.isVisible()) ;
         }
-        return getWalking().webWalk(Bank.AREAS);
+        return false;
+    }
+
+    private boolean walkToBank() throws InterruptedException {
+        WebWalkEvent webEvent;
+        if (useDepositBoxes) {
+            int shortestDistance = Integer.MAX_VALUE;
+            Position closestPosition = myPosition();
+            for (Position position : ALL_BANK_AND_DEPOSIT_BOX_POSITIONS) {
+                shortestDistance = Math.min(myPosition().distance(position), shortestDistance);
+                closestPosition = position;
+            }
+            if (shortestDistance < 20) {
+                ALL_BANK_AND_DEPOSIT_BOX_POSITIONS = Stream.concat(Stream.of(Bank.POSITIONS), Stream.of(DepositBox.POSITIONS)).toArray(Position[]::new);
+                return getWalking().walk(closestPosition);
+            }
+            return getWalking().webWalk(ALL_BANK_AND_DEPOSIT_BOX_AREAS);
+//            webEvent = new WebWalkEvent(ALL_BANK_AND_DEPOSIT_BOX_AREAS);
+        } else {
+            return getWalking().webWalk(Bank.POSITIONS);
+//            webEvent = new WebWalkEvent(Bank.POSITIONS);
+        }
+//        webEvent.setEnergyThreshold(random(15, 35));
+//        webEvent.setHighBreakPriority(true);
+//        if(random(1,3) == 1) webEvent.useSimplePath();
+//
+//        webEvent.execute();
+//        if(webEvent.getCompletion() < 100) {
+//            Entity closestBank = getBank().closest();
+//            closestBank = getBank().closest();
+//            if (closestBank.getPosition() != null) {
+//                logger.debug("Walking the last bit to the bank.");
+//                getWalking().webWalk(closestBank.getPosition());
+//            }
+//        }
+
+//        return true;
     }
 
     boolean isBankOpen() {
@@ -96,13 +134,14 @@ public abstract class Banking extends BlockingExecutable {
 
     private void openBank() throws InterruptedException {
         if (getBank() != null && getBank().open()) {
-            Sleep.sleepUntil(() -> getBank().isOpen(), 5000);
+            Sleep.sleepUntil(() -> getBank().isOpen(), 15000);
             return;
         }
 
         if (useDepositBoxes && getDepositBox() != null) {
             if (getDepositBox().open()) {
-                Sleep.sleepUntil(() -> getDepositBox().isOpen(), 5000);
+                Sleep.sleepUntil(() -> getDepositBox().isOpen(), 15000);
+                return;
             }
         }
 

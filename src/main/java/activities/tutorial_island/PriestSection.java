@@ -7,6 +7,7 @@ import util.Sleep;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public final class PriestSection extends TutorialSection {
 
@@ -28,11 +29,6 @@ public final class PriestSection extends TutorialSection {
 
     @Override
     public final void run() throws InterruptedException {
-        if (pendingContinue()) {
-            selectContinue();
-            return;
-        }
-
         switch (getProgress()) {
             case 550:
                 if (getInstructor() == null) {
@@ -47,16 +43,14 @@ public final class PriestSection extends TutorialSection {
                 getTabs().open(Tab.PRAYER);
                 break;
             case 570:
+            case 600:
                 talkToInstructor();
                 break;
             case 580:
                 getTabs().open(Tab.FRIENDS);
                 break;
             case 590:
-                getTabs().open(Tab.IGNORES);
-                break;
-            case 600:
-                talkToInstructor();
+                getTabs().open(Tab.CLANCHAT); //TODO: this was 'IGNORES', might need to be changed again...
                 break;
             case 610:
                 if (getDoorHandler().handleNextObstacle(new Position(3122, 3101, 0))) {

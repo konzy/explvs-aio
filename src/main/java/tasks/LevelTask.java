@@ -17,6 +17,8 @@ public class LevelTask extends Task {
 
     @Override
     public boolean isComplete() {
+        if (activity.isComplete) return true;
+
         return getSkills().getStatic(skill) >= targetLevel;
     }
 

@@ -1,8 +1,10 @@
 package activities.tutorial_island;
 
+
 import org.osbot.rs07.api.map.Area;
 import org.osbot.rs07.api.map.Position;
 import org.osbot.rs07.api.model.NPC;
+import org.osbot.rs07.api.ui.RS2Widget;
 import org.osbot.rs07.api.ui.Spells;
 import org.osbot.rs07.api.ui.Tab;
 import org.osbot.rs07.event.WalkingEvent;
@@ -10,6 +12,7 @@ import util.Sleep;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public final class WizardSection extends TutorialSection {
 
@@ -47,16 +50,30 @@ public final class WizardSection extends TutorialSection {
             }
     );
 
+    private static final Area LUMBRIDGE_AREA = new Area(3226, 3218, 3236, 3236);
+
     public WizardSection() {
         super("Magic Instructor");
     }
 
     @Override
     public final void run() throws InterruptedException {
-        if (pendingContinue()) {
-            selectContinue();
-            return;
-        }
+        logger.debug("In wizard section");
+
+//        RS2Widget[] jonDialog = getWidgets().getWidgets(231, 4);
+//        if (jonDialog!= null && jonDialog.length > 0) {
+//            Optional<RS2Widget> jonWidgetOption = Arrays.stream(jonDialog)
+//                    .filter(w -> w.isVisible() && w.getMessage().contains("Adventurer Jon")).findFirst();
+//            if (jonWidgetOption.isPresent()) {
+//                logger.debug("Found Jon widget");
+//            }
+//        }
+//
+//        if (pendingContinue()) {
+//            logger.debug("Found Continue widget");
+//            selectContinue();
+//            return;
+//        }
 
         if (getInstructor() == null) {
             Sleep.sleepUntil(() -> myPlayer().isAnimating(), 5000, 600);
@@ -82,7 +99,8 @@ public final class WizardSection extends TutorialSection {
                 break;
             case 670:
                 if (getDialogues().isPendingOption()) {
-                    getDialogues().selectOption("No, I'm not planning to do that.", "Yes.", "I'm fine, thanks.");
+                    getDialogues().selectOption("No, I'm not planning to do that.", "Yes.", "I'm fine, thanks.", "Yes, send me to the mainland");
+
                 } else if (getMagic().isSpellSelected()) {
                     getMagic().deselectSpell();
                 } else {

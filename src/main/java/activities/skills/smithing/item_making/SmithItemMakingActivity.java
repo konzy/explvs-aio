@@ -11,6 +11,7 @@ import util.item_requirement.ItemReq;
 import util.widget.CachedWidget;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class SmithItemMakingActivity extends Activity {
@@ -23,6 +24,8 @@ public class SmithItemMakingActivity extends Activity {
 
     private Executable bankNode;
 
+    private static final List<String> smithSetItems = Arrays.asList("Dart tips", "Arrowtips", "Knives", "Bolts");
+
     public SmithItemMakingActivity(final Bar bar, final SmithItem smithItem, final SmithLocation smithLocation) {
         super(ActivityType.SMITHING);
         this.bar = bar;
@@ -34,7 +37,7 @@ public class SmithItemMakingActivity extends Activity {
         itemReqs.add(new ItemReq(bar.toString(), smithItem.barsRequired));
         itemReqs.add(new ItemReq("Hammer"));
         this.itemReqs = itemReqs.toArray(new ItemReq[0]);
-        bankNode = new ItemReqBanking(this.itemReqs);
+        bankNode = new ItemReqBanking(this, this.itemReqs);
     }
 
     @Override
@@ -58,7 +61,9 @@ public class SmithItemMakingActivity extends Activity {
     }
 
     private void smithAll() {
-        if (smithItemWidget.getParent(getWidgets()).get().interact("Smith")) {
+        if (smithItemWidget.getParent(getWidgets()).isPresent() && smithItemWidget.getParent(getWidgets()).get().interact("Smith")) {
+            Sleep.sleepUntil(() -> !canSmithItem() || getDialogues().isPendingContinuation(), 100_000);
+        } else if (smithItemWidget.getParent(getWidgets()).isPresent() && smithItemWidget.getParent(getWidgets()).get().interact("Smith set")) {
             Sleep.sleepUntil(() -> !canSmithItem() || getDialogues().isPendingContinuation(), 100_000);
         }
     }

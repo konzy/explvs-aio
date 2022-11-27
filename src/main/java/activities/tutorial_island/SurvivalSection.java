@@ -9,10 +9,7 @@ import org.osbot.rs07.api.ui.Tab;
 import org.osbot.rs07.event.WalkingEvent;
 import util.Sleep;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public final class SurvivalSection extends TutorialSection {
 
@@ -27,10 +24,6 @@ public final class SurvivalSection extends TutorialSection {
 
     @Override
     public final void run() throws InterruptedException {
-        if (pendingContinue()) {
-            selectContinue();
-            return;
-        }
         switch (getProgress()) {
             case 20:
                 talkToInstructor();

@@ -13,7 +13,7 @@ public class TiaraMakingActivity extends RunecraftingBase {
     public TiaraMakingActivity(final Altar altar) {
         super(altar);
         itemReqs = new ItemReq[]{new ItemReq("Tiara", 1), new ItemReq(altar.talisman, 1)};
-        bankNode = new ItemReqBanking(itemReqs);
+        bankNode = new ItemReqBanking(this, itemReqs);
     }
 
     @Override

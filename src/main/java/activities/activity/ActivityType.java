@@ -5,7 +5,7 @@ import org.osbot.rs07.api.ui.Skill;
 public enum ActivityType {
 
     AGILITY(Skill.AGILITY),
-    //COMBAT (Skill.ATTACK, Skill.STRENGTH, Skill.DEFENCE, Skill.HITPOINTS, Skill.RANGED, Skill.MAGIC),
+    COMBAT (Skill.ATTACK, Skill.STRENGTH, Skill.DEFENCE, Skill.HITPOINTS, Skill.RANGED, Skill.MAGIC),
     //CONSTRUCTION (Skill.CONSTRUCTION),
     COOKING(Skill.COOKING),
     CRAFTING(Skill.CRAFTING),
@@ -15,7 +15,7 @@ public enum ActivityType {
     FLETCHING(Skill.FLETCHING),
     HERBLORE(Skill.HERBLORE),
     //HUNTER (Skill.HUNTER),
-    //MAGIC (Skill.MAGIC),
+    MAGIC (Skill.MAGIC),
     MINING(Skill.MINING),
     //PRAYER (Skill.PRAYER),
     RUNECRAFTING(Skill.RUNECRAFTING),
@@ -24,7 +24,11 @@ public enum ActivityType {
     THIEVING(Skill.THIEVING),
     WOODCUTTING(Skill.WOODCUTTING),
     RANGED(Skill.RANGED),
-    MONEY_MAKING;
+    MONEY_MAKING,
+    TANNING,
+    IDLING,
+    SHOPPING,
+    FAVOUR;
 
     public Skill[] gainedXPSkills;
 

@@ -33,7 +33,7 @@ public class GrandExchangeBuyEvent extends GrandExchangeEvent {
     }
 
     @Override
-    boolean setOfferItem() {
+    boolean setOfferItem() throws InterruptedException {
         Optional<String> itemSearchTextOpt = getSearchText();
 
         if (!itemSearchTextOpt.isPresent()) {
@@ -48,6 +48,7 @@ public class GrandExchangeBuyEvent extends GrandExchangeEvent {
                     getKeyboard().typeString("\b");
                 }
             }
+            sleep(random(1500, 3000));
             getKeyboard().typeString(itemName, false);
         } else if (selectItemFromList(itemName)) {
             return true;

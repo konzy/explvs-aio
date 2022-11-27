@@ -86,7 +86,7 @@ abstract class GrandExchangeEvent extends Event {
         } else if (getGrandExchange().confirm()) {
             setFinished();
         }
-        return random(100, 150);
+        return random(1000, 1500);
     }
 
     private boolean isGrandExchangeOpen() {
@@ -110,7 +110,7 @@ abstract class GrandExchangeEvent extends Event {
 
     abstract boolean openOfferScreen(final GrandExchange.Box box);
 
-    abstract boolean setOfferItem();
+    abstract boolean setOfferItem() throws InterruptedException;
 
     private Optional<GrandExchange.Box> getEmptyBox() {
         GrandExchange.Box[] boxes = getWorlds().isMembersWorld() ? MEMBERS_BOXES : F2P_BOXES;

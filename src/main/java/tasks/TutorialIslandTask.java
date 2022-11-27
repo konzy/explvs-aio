@@ -4,6 +4,8 @@ import activities.tutorial_island.TutorialIsland;
 
 public class TutorialIslandTask extends Task {
 
+    int runEnergyTrigger = random(30, 50);
+
     public TutorialIslandTask() {
         super(TaskType.TUTORIAL_ISLAND, new TutorialIsland());
     }
@@ -15,7 +17,7 @@ public class TutorialIslandTask extends Task {
 
     @Override
     public void run() throws InterruptedException {
-        if (getSettings().getRunEnergy() > 40) {
+        if (getSettings().getRunEnergy() > runEnergyTrigger) {
             getSettings().setRunning(true);
         }
         super.run();

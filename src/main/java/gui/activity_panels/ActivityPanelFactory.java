@@ -19,6 +19,8 @@ public class ActivityPanelFactory {
                 return new MiningActivityPanel();
             case FIREMAKING:
                 return new FMActivityPanel();
+            case MAGIC:
+                return new MagicActivityPanel();
             case RUNECRAFTING:
                 return new RCActivityPanel();
             case THIEVING:
@@ -27,12 +29,20 @@ public class ActivityPanelFactory {
                 return new HerbloreActivityPanel();
             case MONEY_MAKING:
                 return new MoneyMakingActivityPanel();
+            case TANNING:
+                return new TanningActivityPanel();
+            case IDLING:
+                return new IdleActivityPanel();
+            case SHOPPING:
+                return new ShoppingActivityPanel();
             case CRAFTING:
                 return new CraftingActivityPanel();
             case RANGED:
                 return new RangedActivityPanel();
             case COOKING:
                 return new CookingActivityPanel();
+            case FAVOUR:
+                return new FavourActivityPanel();
         }
         return null;
     }

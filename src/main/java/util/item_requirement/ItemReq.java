@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 public class ItemReq {
 
-    public static final int QUANTITY_ALL = Integer.MIN_VALUE;
+    public static final int QUANTITY_ALL = Integer.MAX_VALUE;
 
     private final String name;
     private final int minQuantity;
@@ -17,7 +17,7 @@ public class ItemReq {
 
     private boolean noted;
     private boolean stackable;
-    private boolean equiable;
+    private boolean equippable;
 
     // Used for "tools", where the player should only ever have 1 of the item
     // For example, axes when woodcutting, or pickaxes when mining
@@ -91,7 +91,7 @@ public class ItemReq {
     }
 
     public final boolean isEquipable() {
-        return equiable;
+        return equippable;
     }
 
     public final int getMinNumSlots() {
@@ -119,8 +119,8 @@ public class ItemReq {
         return this;
     }
 
-    public final ItemReq setEquipable() {
-        equiable = true;
+    public final ItemReq setEquippable() {
+        equippable = true;
         return this;
     }
 

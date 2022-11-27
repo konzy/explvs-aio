@@ -6,9 +6,9 @@ import util.Sleep;
 import util.executable.Executable;
 
 import java.awt.event.KeyEvent;
+import java.util.Random;
 
 public abstract class TutorialSection extends Executable {
-
     private final String INSTRUCTOR_NAME;
 
     public TutorialSection(final String INSTRUCTOR_NAME) {
@@ -32,22 +32,6 @@ public abstract class TutorialSection extends Executable {
     protected boolean pendingContinue() {
         RS2Widget continueWidget = getContinueWidget();
         return continueWidget != null && continueWidget.isVisible();
-    }
-
-    protected boolean selectContinue() {
-        RS2Widget continueWidget = getContinueWidget();
-        if (continueWidget == null) {
-            return false;
-        }
-        if (continueWidget.getMessage().contains("Click here to continue")) {
-            getKeyboard().pressKey(KeyEvent.VK_SPACE);
-            Sleep.sleepUntil(() -> !continueWidget.isVisible(), 1000, 600);
-            return true;
-        } else if (continueWidget.interact()) {
-            Sleep.sleepUntil(() -> !continueWidget.isVisible(), 1000, 600);
-            return true;
-        }
-        return false;
     }
 
     private RS2Widget getContinueWidget() {

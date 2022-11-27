@@ -1,5 +1,8 @@
 package activities.tutorial_island;
 
+import org.osbot.E;
+import org.osbot.rs07.api.Equipment;
+import org.osbot.rs07.api.Tabs;
 import org.osbot.rs07.api.map.Area;
 import org.osbot.rs07.api.model.NPC;
 import org.osbot.rs07.api.ui.EquipmentSlot;
@@ -7,6 +10,8 @@ import org.osbot.rs07.api.ui.Tab;
 import util.Sleep;
 import util.widget.CachedWidget;
 import util.widget.filters.WidgetActionFilter;
+
+import java.util.Random;
 
 public final class FightingSection extends TutorialSection {
 
@@ -22,11 +27,6 @@ public final class FightingSection extends TutorialSection {
 
     @Override
     public final void run() throws InterruptedException {
-        if (pendingContinue()) {
-            selectContinue();
-            return;
-        }
-
         switch (getProgress()) {
             case 370:
                 talkToInstructor();
@@ -40,6 +40,7 @@ public final class FightingSection extends TutorialSection {
                 }
                 break;
             case 405:
+                getWidgets().closeOpenInterface();
                 wieldItem("Bronze dagger");
                 break;
             case 410:

@@ -3,6 +3,7 @@ package util.executable;
 import util.custom_method_provider.CustomMethodProvider;
 
 public abstract class Executable extends CustomMethodProvider {
+    public boolean canExit = true;
 
     public void onStart() throws InterruptedException {}
 
@@ -11,7 +12,7 @@ public abstract class Executable extends CustomMethodProvider {
     public void onEnd() throws InterruptedException {}
 
     public boolean canExit() {
-        return true;
+        return canExit;
     }
 }
 

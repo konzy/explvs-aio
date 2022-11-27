@@ -9,6 +9,7 @@ import util.widget.filters.WidgetActionFilter;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public final class BankSection extends TutorialSection {
 
@@ -39,10 +40,11 @@ public final class BankSection extends TutorialSection {
     );
     private static final List<Position> PATH_TO_BANK = Arrays.asList(
             new Position(3111, 3123, 0),
-            new Position(3114, 3119, 0),
-            new Position(3118, 3116, 0),
-            new Position(3121, 3118, 0)
+            new Position(3117, 3116, 0),
+            new Position(3121, 3116, 0),
+            new Position(3121, 3121, 0)
     );
+
     private final CachedWidget accountManagementWidget = new CachedWidget(new WidgetActionFilter("Account Management"));
 
     public BankSection() {
@@ -51,17 +53,10 @@ public final class BankSection extends TutorialSection {
 
     @Override
     public final void run() throws InterruptedException {
-        if (pendingContinue()) {
-            selectContinue();
-            return;
-        }
-
         switch (getProgress()) {
             case 510:
                 if (!BANK_AREA.contains(myPosition())) {
-                    if (getWalking().walkPath(PATH_TO_BANK)) {
-                        getDoorHandler().handleNextObstacle(BANK_AREA);
-                    }
+                    getWalking().walkPath(PATH_TO_BANK);
                 } else if (getDialogues().isPendingOption()) {
                     getDialogues().selectOption("Yes.");
                 } else if (getObjects().closest("Bank booth").interact("Use")) {

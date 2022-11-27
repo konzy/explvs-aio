@@ -32,7 +32,7 @@ public enum Mine {
                     new RockArea(Rock.COPPER, new Area(3296, 3313, 3298, 3315)),
                     new RockArea(Rock.SILVER, new Area(3303, 3312, 3302, 3314))
             },
-            Rock.COPPER, Rock.TIN, Rock.IRON, Rock.SILVER, Rock.COAL, Rock.GOLD, Rock.MITHRIL, Rock.ADAMANTITE),
+            Rock.COPPER, Rock.IRON, Rock.SILVER, Rock.COAL, Rock.GOLD, Rock.MITHRIL, Rock.ADAMANTITE),
     //ARZINIAN("Arzinian Mine", null, null, Rock.GOLD),
     BARBARIAN_VILLAGE("Barbarian Village Mine", new RockArea[]{
             new RockArea(Rock.COAL, new Area(3084, 3419, 3081, 3423)),

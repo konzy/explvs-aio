@@ -15,7 +15,7 @@ public class CannonballActivity extends Activity {
             new ItemReq("Ammo mould"),
             new ItemReq("Steel bar", 1)
     };
-    private final Executable bankNode = new ItemReqBanking(itemReqs);
+    private final Executable bankNode = new ItemReqBanking(this, itemReqs);
 
     public CannonballActivity(final SmeltLocation smeltLocation) {
         super(ActivityType.SMITHING);

@@ -11,6 +11,9 @@ import util.executable.Executable;
 import util.item_requirement.ItemReq;
 import util.widget.CachedWidget;
 
+import java.util.List;
+import java.util.Objects;
+
 public class CraftingActivity extends Activity {
 
     private final CraftingItem craftingItem;
@@ -24,7 +27,7 @@ public class CraftingActivity extends Activity {
         super(ActivityType.CRAFTING);
         this.craftingItem = craftingItem;
         this.location = location;
-        bankNode = new ItemReqBanking(craftingItem.itemReqs);
+        bankNode = new ItemReqBanking(this, craftingItem.itemReqs);
     }
 
     @Override

@@ -4,6 +4,7 @@ import activities.activity.Activity;
 import activities.activity.ActivityType;
 import activities.banking.ItemReqBanking;
 import activities.skills.smithing.Bar;
+import org.osbot.rs07.api.model.Entity;
 import util.Sleep;
 import util.executable.Executable;
 import util.item_requirement.ItemReq;
@@ -18,12 +19,13 @@ public class SmeltingActivity extends Activity {
         super(ActivityType.SMITHING);
         this.bar = bar;
         this.smeltLocation = smeltLocation;
-        bankNode = new ItemReqBanking(bar.oresRequired);
+        bankNode = new ItemReqBanking(this, bar.oresRequired);
     }
 
     @Override
     public void runActivity() throws InterruptedException {
         if (canSmeltBar()) {
+//            Entity closestBank = getBank().closest();
             if (!smeltLocation.location.getArea().contains(myPosition())) {
                 getWalking().webWalk(smeltLocation.location.getArea());
             } else {

@@ -2,6 +2,7 @@ package activities.grand_exchange;
 
 import activities.banking.ItemReqBanking;
 import activities.grand_exchange.event.GrandExchangeBuyEvent;
+import util.Sleep;
 import util.executable.ExecutionFailedException;
 import util.item_requirement.ItemReq;
 
@@ -19,11 +20,10 @@ public class GEBuyActivity extends GEActivity {
 
         coinReq = new ItemReq(
                 "Coins",
-                coinsRequired,
                 coinsRequired
         ).setStackable();
 
-        itemReqBanking = new ItemReqBanking(coinReq);
+        itemReqBanking = new ItemReqBanking(this, coinReq);
     }
 
     @Override
@@ -35,6 +35,12 @@ public class GEBuyActivity extends GEActivity {
         if (!GRAND_EXCHANGE.contains(myPosition())) {
             getWalking().webWalk(GRAND_EXCHANGE);
         } else if (!coinReq.hasRequirement(getInventory())) {
+            if(!getBank().isOpen()) {
+                getBank().open();
+                Sleep.sleepUntil(getBank()::isOpen, 5000, random(300, 500));
+            }
+            if(!getInventory().isEmpty()) getBank().depositAll();
+            Sleep.sleepUntil(getInventory()::isEmpty, 5000, random(300, 500));
             execute(itemReqBanking);
         } else {
             GrandExchangeBuyEvent buyEvent = new GrandExchangeBuyEvent(

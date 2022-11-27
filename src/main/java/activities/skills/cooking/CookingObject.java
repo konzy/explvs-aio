@@ -2,7 +2,7 @@ package activities.skills.cooking;
 
 public enum CookingObject {
 
-    FIRE("Fire"),
+    FIRE("Fire", CookingType.MEAT),
     STOVE("Stove", CookingType.CAKE, CookingType.MEAT, CookingType.PIE, CookingType.PIZZA),
     RANGE("Range", CookingType.CAKE, CookingType.MEAT, CookingType.PIE, CookingType.PIZZA);
 

@@ -29,8 +29,8 @@ public class RangeGuildActivity extends Activity {
     public RangeGuildActivity(final Bow bow) {
         super(ActivityType.RANGED);
         this.bow = bow;
-        itemReqs = new ItemReq[]{new ItemReq("Coins", 200, 200_000).setStackable(), new ItemReq(bow.toString(), 1).setEquipable()};
-        bankNode = new ItemReqBanking(itemReqs);
+        itemReqs = new ItemReq[]{new ItemReq("Coins", 200, 200_000).setStackable(), new ItemReq(bow.toString(), 1).setEquippable()};
+        bankNode = new ItemReqBanking(this, itemReqs);
     }
 
     @Override

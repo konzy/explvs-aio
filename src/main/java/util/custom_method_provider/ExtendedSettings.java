@@ -4,9 +4,9 @@ import org.osbot.rs07.api.Settings;
 import org.osbot.rs07.api.ui.RS2Widget;
 import org.osbot.rs07.api.ui.Tab;
 import org.osbot.rs07.event.Event;
+import util.widget.CachedWidget;
 import util.widget.filters.WidgetActionFilter;
 
-import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -24,6 +24,8 @@ public class ExtendedSettings extends Settings {
             this.searchString = searchString;
         }
     }
+
+    private final CachedWidget searchWidget = new CachedWidget(w -> w.getMessage().contains("To search for a setting"));
 
     public enum AllSettingsTab {
         SEARCH("Search", 0xb, 0x1b, 0x2b, 0x3b, 0x4b, 0x5b, 0x70b),
@@ -70,7 +72,7 @@ public class ExtendedSettings extends Settings {
 
     public boolean toggleSetting(final Setting setting) {
         return execute(new Event() {
-            private boolean clearedSearch;
+            private boolean clickedSearchBar;
             private boolean typedString;
 
             @Override
@@ -81,29 +83,41 @@ public class ExtendedSettings extends Settings {
                 } else if (getTabs().getOpen() != Tab.SETTINGS) {
                     getTabs().open(Tab.SETTINGS);
                 } else if (!isAllSettingsWidgetVisible()) {
+                    logger.debug("Opening all settings widget");
                     RS2Widget allSettingsWidget = getWidgets().getWidgetContainingText("All Settings");
                     if (allSettingsWidget != null) {
                         allSettingsWidget.interact();
                     }
-                } else if (!isAllSettingsTabOpen(AllSettingsTab.SEARCH)) {
+                } else if (!clickedSearchBar) {
+                    logger.debug("Clicking on search bar");
                     RS2Widget searchWidget = getWidgets().singleFilter(134, new WidgetActionFilter("Search"));
                     if (searchWidget != null) {
                         searchWidget.interact();
                     }
-                } else if (!clearedSearch) {
-                    getKeyboard().pressKey(KeyEvent.VK_DELETE);
+                    clickedSearchBar = true;
                     sleep(random(1000, 2000));
-                    clearedSearch = true;
                 } else if (!typedString) {
-                    typedString = getKeyboard().typeString(setting.searchString);
+                    logger.debug("typing string");
+                    for (char b : setting.searchString.toCharArray()) {
+                        typedString = getKeyboard().typeKey(b);
+                        sleep(random(200, 500));
+                    }
+                    getKeyboard().typeEnter();
+                    sleep(random(1000, 2000));
                 } else{
+                    logger.debug("getting search result widget");
                     RS2Widget firstSearchResult = getFirstSearchResult();
                     if (firstSearchResult != null) {
                         if (firstSearchResult.interact()) {
                             sleep(random(1000, 2000));
+                            getWidgets().closeOpenInterface();
+                            sleep(random(1000, 2000));
+                            clickedSearchBar = true;
+                            typedString = false;
                             setFinished();
                         }
                     } else {
+                        logger.debug("Failed to get Search result");
                         setFailed();
                     }
                 }
@@ -111,7 +125,7 @@ public class ExtendedSettings extends Settings {
             }
 
             private RS2Widget getFirstSearchResult() {
-                RS2Widget[] searchResults = getWidgets().get(134, 17).getChildWidgets();
+                RS2Widget[] searchResults = getWidgets().get(134, 18).getChildWidgets();
                 Optional<RS2Widget> targetWidget = Arrays.stream(searchResults).filter(RS2Widget::isVisible).findFirst();
                 return targetWidget.orElse(null);
             }

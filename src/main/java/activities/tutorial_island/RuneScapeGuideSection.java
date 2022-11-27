@@ -43,9 +43,9 @@ public final class RuneScapeGuideSection extends TutorialSection {
 
     private final CachedWidget nameAcceptedWidget = new CachedWidget(w -> w.getMessage().contains("Great!"));
     private final CachedWidget lookupNameWidget = new CachedWidget(w -> w.getMessage().contains("Look up name"));
-    private final CachedWidget inputNameWidget = new CachedWidget(w -> w.getMessage().contains("Please pick a unique display name"));
+    private final CachedWidget inputNameWidget = new CachedWidget(w -> w.getMessage().contains("you must select a unique"));
     private final CachedWidget setNameWidget = new CachedWidget("Set name");
-    private final CachedWidget chooseDisplayNameWidget = new CachedWidget("Choose display name");
+    private final CachedWidget chooseDisplayNameWidget = new CachedWidget("Set display name");
     private final CachedWidget suggestionsWidget = new CachedWidget("one of our suggestions");
     private final CachedWidget creationScreenWidget = new CachedWidget("Head");
     private final CachedWidget experienceWidget = new CachedWidget("What's your experience with Old School Runescape?");
@@ -58,11 +58,6 @@ public final class RuneScapeGuideSection extends TutorialSection {
 
     @Override
     public final void run() throws InterruptedException {
-        if (pendingContinue()) {
-            selectContinue();
-            return;
-        }
-
         switch (getProgress()) {
             case 0:
             case 1:
@@ -73,7 +68,7 @@ public final class RuneScapeGuideSection extends TutorialSection {
                     createRandomCharacter();
                 } else if (experienceWidget.isVisible(getWidgets())) {
                     if (getDialogues().selectOption(random(1, 3))) {
-                        Sleep.sleepUntil(() -> !experienceWidget.isVisible(getWidgets()), 2000, 600);
+                        Sleep.sleepUntil(() -> !experienceWidget.isVisible(getWidgets()), 2000, random(250, 350));
                     }
                 } else {
                     talkToInstructor();
@@ -97,6 +92,8 @@ public final class RuneScapeGuideSection extends TutorialSection {
     }
 
     private void setDisplayName() throws InterruptedException {
+        sleep(random(1000, 2000));
+
         UsernameCheckStatus checkStatus = UsernameCheckStatus.getUsernameCheckStatus(getConfigs());
 
         if (checkStatus == null) {
@@ -104,7 +101,6 @@ public final class RuneScapeGuideSection extends TutorialSection {
             getBot().getScriptExecutor().stop();
             return;
         }
-
         switch (checkStatus) {
             case NOT_AVAILABLE:
                 if (suggestionsWidget.isVisible(getWidgets())) {
@@ -112,8 +108,17 @@ public final class RuneScapeGuideSection extends TutorialSection {
                     if (suggestionWidget.isPresent() && suggestionWidget.get().interact("Set name")) {
                         Sleep.sleepUntil(() -> nameAcceptedWidget.get(getWidgets()).isPresent(), 5000);
                     }
-                } else if (inputNameWidget.isVisible(getWidgets()) && getKeyboard().typeString(generateRandomString(5), true)) {
-                    Sleep.sleepUntil(() -> UsernameCheckStatus.getUsernameCheckStatus(getConfigs()) == UsernameCheckStatus.CHECKING, 2000, 100);
+                } else if (inputNameWidget.isVisible(getWidgets())) {
+                    logger.debug("InputWidget Visible");
+                    RS2Widget nameBox = getWidgets().get(558, 9);
+                    if (nameBox != null && nameBox.isVisible()){
+                        logger.debug("nameBox Visible");
+                        nameBox.interact();
+                        sleep(random(1000, 2000));
+                    }
+                    if (getKeyboard().typeString("konzy" + random(1, 10000), true)) {
+                        Sleep.sleepUntil(() -> UsernameCheckStatus.getUsernameCheckStatus(getConfigs()) == UsernameCheckStatus.CHECKING, 2000, 100);
+                    }
                 } else if (lookupNameWidget.interact(getWidgets())) {
                     Sleep.sleepUntil(() -> !inputNameWidget.isVisible(getWidgets()), 8000, 600);
                 }
@@ -155,10 +160,9 @@ public final class RuneScapeGuideSection extends TutorialSection {
 
         Collections.shuffle(Arrays.asList(selectableWidgets));
 
-        int maxSelection = new Random().nextInt(Math.min(selectableWidgets.length, 15));
-
-        for (int i = 0; i < maxSelection; i ++) {
-            clickRandomTimes(selectableWidgets[i]);
+        for (RS2Widget widget: selectableWidgets) {
+            clickRandomTimes(widget);
+            sleep(random(750, 2000));
         }
 
         if (getWidgets().getWidgetContainingText("Confirm").interact()) {
@@ -167,11 +171,21 @@ public final class RuneScapeGuideSection extends TutorialSection {
     }
 
     private void clickRandomTimes(final RS2Widget widget) throws InterruptedException {
-        int clickCount = new Random().nextInt(4);
+        int clickCount = new Random().nextInt(7);
 
         for (int i = 0; i < clickCount; i++) {
             if (widget.interact()) {
                 MethodProvider.sleep(150);
+            }
+        }
+    }
+
+    private void clickRandomTimes(final RS2Widget widget, int maxTimes) throws InterruptedException {
+        int clickCount = new Random().nextInt(maxTimes);
+
+        for (int i = 0; i < clickCount; i++) {
+            if (widget.interact()) {
+                MethodProvider.sleep(250);
             }
         }
     }

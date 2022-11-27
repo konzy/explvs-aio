@@ -43,9 +43,7 @@ public class FlaxPickingActivity extends Activity {
     @Override
     public void runActivity() throws InterruptedException {
         if (!getInventory().isFull() && getEquipment().isEmpty()) {
-            if (!flaxArea.contains(myPosition())) {
-                getWalking().webWalk(flaxArea);
-            } else {
+            if (runTo(flaxArea)) {
                 if (flax == null || !flax.exists()) flax = getObjects().closest(true, "Flax");
                 if (flax != null) {
                     long flaxInvAmount = getInventory().getAmount("Flax");
@@ -57,6 +55,9 @@ public class FlaxPickingActivity extends Activity {
                         }
                     }.sleep();
                 }
+            } else {
+                logger.debug("Something went wrong walking, skipping task");
+                isComplete = true;
             }
         } else {
             execute(flaxBankNode);

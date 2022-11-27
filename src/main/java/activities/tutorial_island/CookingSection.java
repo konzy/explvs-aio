@@ -6,6 +6,7 @@ import util.Sleep;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public class CookingSection extends TutorialSection {
 
@@ -22,10 +23,6 @@ public class CookingSection extends TutorialSection {
 
     @Override
     public final void run() throws InterruptedException {
-        if (pendingContinue()) {
-            selectContinue();
-            return;
-        }
         switch (getProgress()) {
             case 130:
                 if (getWalking().walkPath(PATH_TO_COOK_BUILDING)) {

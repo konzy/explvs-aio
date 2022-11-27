@@ -64,7 +64,7 @@ public class MiningActivityPanel implements ActivityPanel {
             return new RuneEssMiningActivity((ResourceMode) resourceModeSelector.getSelectedItem());
         }
 
-        return new MiningActivity((Mine) mineSelector.getSelectedItem(), (Rock) rockSelector.getSelectedItem(), (ResourceMode) resourceModeSelector.getSelectedItem());
+        return new MiningActivity((Mine) mineSelector.getSelectedItem(), (Rock) rockSelector.getSelectedItem(), (ResourceMode) resourceModeSelector.getSelectedItem(), true);
     }
 
     @Override

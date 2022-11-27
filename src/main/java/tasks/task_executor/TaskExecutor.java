@@ -1,8 +1,12 @@
 package tasks.task_executor;
 
+import org.osbot.rs07.randoms.BreakManager;
+import org.osbot.rs07.script.RandomEvent;
+import org.osbot.rs07.script.RandomSolver;
 import tasks.LoopTask;
 import tasks.Task;
-import tasks.break_task.CustomBreakManager;
+import util.breaking.Break;
+import util.breaking.MultiBreakManager;
 import util.executable.Executable;
 import util.executable.ExecutionFailedException;
 
@@ -13,9 +17,7 @@ public final class TaskExecutor extends Executable {
     private final List<Task> allTasks;
     private final Queue<Task> taskQueue = new LinkedList<>();
     private final List<TaskChangeListener> taskChangeListeners = new ArrayList<>();
-    private final CustomBreakManager breakManager = new CustomBreakManager();
-    private long previousIdleTime;
-    private long nextIdleTime;
+    private final MultiBreakManager breakManager = new MultiBreakManager();
 
     private Task currentTask;
 
@@ -48,11 +50,15 @@ public final class TaskExecutor extends Executable {
 
     @Override
     public void onStart() throws InterruptedException {
+        breakManager.add(new Break(6.0/60.0, 10.0/60.0, 1.5, 3.0, false));
+        breakManager.add(new Break(1.0, 2.0, 10.0, 15.0, false));
+        breakManager.add(new Break(10, 20, 30, 45, true));
+        breakManager.add(new Break(35, 60, 120, 200, true));
+
         breakManager.exchangeContext(getBot());
         getBot().getRandomExecutor().overrideOSBotRandom(breakManager);
-
-        previousIdleTime = System.currentTimeMillis();
-        nextIdleTime = previousIdleTime + calculateNextIdleTime();
+        RandomSolver bm = getBot().getRandomExecutor().forEvent(RandomEvent.BREAK_MANAGER);
+        logger.debug("BreakManager class=" + bm.getClass());
     }
 
     @Override
@@ -101,16 +107,6 @@ public final class TaskExecutor extends Executable {
 
     private void runTask(final Task task) throws InterruptedException {
         try {
-//            if (System.currentTimeMillis() > nextIdleTime) {
-//                previousIdleTime = nextIdleTime;
-//                int idleTime = random(1000 * 10, 1000 * 35);
-//                log("Idling for: " + (idleTime / 1000) + "s");
-//                breakManager.startBreaking(idleTime);
-//                nextIdleTime = previousIdleTime + idleTime + calculateNextIdleTime();
-//                log("Done idling");
-//                log("Next idling in: " + (nextIdleTime - System.currentTimeMillis()) / 1000 + "s");
-//            }
-
             execute(task);
         } catch (NullPointerException nullPointer) {
             log("Found null pointer exception. Task failed, exiting.");
@@ -130,7 +126,4 @@ public final class TaskExecutor extends Executable {
         }
     }
 
-    private long calculateNextIdleTime() {
-        return (1000L * 60 * random(5, 25)) + random(1000, 15 * 1000);
-    }
 }

@@ -8,11 +8,11 @@ public enum Potion {
 
     GUAM_POTION("Guam potion (unf)", VIAL_OF_WATER, new ItemReq("Guam leaf", 1)),
     ATTACK("Attack potion(3)", new ItemReq("Guam potion (unf)", 1), new ItemReq("Eye of newt", 1)),
-    GUAM_TAR("Guam tar", new ItemReq("Guam potion (unf)", 1), new ItemReq("Swamp tar", 15)),
+    GUAM_TAR("Guam tar", new ItemReq("Guam leaf", 1, 26), new ItemReq("Swamp tar", 15).setStackable(), new ItemReq("Pestle and mortar")),
 
     MARRENTIL_POTION("Marrentill potion (unf)", VIAL_OF_WATER, new ItemReq("Marrentill", 1)),
     ANTIPOISION("Antipoison", new ItemReq("Marrentill potion (unf)", 1), new ItemReq("Unicorn horn dust", 1)),
-    MARRENTILL_TAR("Marrentill tar", new ItemReq("Marrentill potion (unf)", 1), new ItemReq("Swamp tar", 15)),
+    MARRENTILL_TAR("Marrentill tar", new ItemReq("Marrentill", 1, 26), new ItemReq("Swamp tar", 15).setStackable(), new ItemReq("Pestle and mortar")),
 
     ROGUES_PURSE_POTION("Rogue's purse potion (unf)", VIAL_OF_WATER, new ItemReq("Rogue's purse", 1)),
     RELICYMS_BALM("Relicym's balm", new ItemReq("Rogue's purse potion (unf)", 1), new ItemReq("Snake weed", 1)),
@@ -20,7 +20,7 @@ public enum Potion {
     TARROMIN_POTION("Tarromin potion (unf)", VIAL_OF_WATER, new ItemReq("Tarromin", 1)),
     STRENGTH("Strength potion", new ItemReq("Tarromin potion (unf)", 1), new ItemReq("Limpwurt root", 1)),
     SERUM_207("Serum 207", new ItemReq("Tarromin potion (unf)", 1), new ItemReq("Ashes", 1)),
-    TARROMIN("Tarromin tar", new ItemReq("Tarromin potion (unf)", 1), new ItemReq("Swamp tar", 15)),
+    TARROMIN_TAR("Tarromin tar", new ItemReq("Tarromin", 1, 26), new ItemReq("Swamp tar", 15).setStackable(), new ItemReq("Pestle and mortar")),
     SHRINK_ME_QUICK("Shrink-me-quick", new ItemReq("Tarromin potion (unf)", 1), new ItemReq("Shrunk ogleroot", 1)),
 
     HARRALANDER_POTION("Harralander potion (unf)", VIAL_OF_WATER, new ItemReq("Harralander", 1)),
@@ -29,7 +29,7 @@ public enum Potion {
     BLAMISH_OIL("Blamish oil", new ItemReq("Harralander potion (unf)", 1), new ItemReq("Blamish snail slime", 1)),
     ENERGY("Energy potion", new ItemReq("Harralander potion (unf)", 1), new ItemReq("Chocolate dust", 1)),
     COMBAT("Combat potion", new ItemReq("Harralander potion (unf)", 1), new ItemReq("Goat horn dust", 1)),
-    HARRALANDER("Harralander tar", new ItemReq("Harralander potion (unf)", 1), new ItemReq("Swamp tar", 15)),
+    HARRALANDER_TAR("Harralander tar", new ItemReq("Harralander", 1, 26), new ItemReq("Swamp tar", 15).setStackable(), new ItemReq("Pestle and mortar")),
 
 
     RANARR_POTION("Ranarr potion (unf)", VIAL_OF_WATER, new ItemReq("Ranarr weed", 1)),

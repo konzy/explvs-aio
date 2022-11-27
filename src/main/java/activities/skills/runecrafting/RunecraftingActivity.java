@@ -24,13 +24,13 @@ public class RunecraftingActivity extends RunecraftingBase {
     @Override
     public void onStart() {
         if (getInventory().contains(altar.tiara) || getEquipment().isWearingItem(EquipmentSlot.HAT, altar.tiara)) {
-            talismanReq = new ItemReq(altar.tiara).setEquipable();
+            talismanReq = new ItemReq(altar.tiara).setEquippable();
         } else if (getInventory().contains(altar.talisman)) {
             talismanReq = new ItemReq(altar.talisman);
         }
 
         if (talismanReq != null) {
-            banking = new ItemReqBanking(talismanReq, essenceReq);
+            banking = new ItemReqBanking(this, talismanReq, essenceReq);
         }
     }
 
@@ -39,7 +39,7 @@ public class RunecraftingActivity extends RunecraftingBase {
         if (talismanReq == null) {
             execute(talismanBanking);
         } else if (banking == null) {
-            banking = new ItemReqBanking(talismanReq, essenceReq);
+            banking = new ItemReqBanking(this, talismanReq, essenceReq);
         } else if (!ItemReq.hasItemRequirements(new ItemReq[]{talismanReq, essenceReq}, getInventory(), getEquipment())) {
             if (getAltar() != null) {
                 leaveAltar();
@@ -78,7 +78,7 @@ public class RunecraftingActivity extends RunecraftingBase {
         @Override
         protected void bank(final BankType currentBankType) {
             if (getBank().contains(altar.tiara)) {
-                talismanReq = new ItemReq(altar.tiara).setEquipable();
+                talismanReq = new ItemReq(altar.tiara).setEquippable();
             } else {
                 talismanReq = new ItemReq(altar.talisman);
             }

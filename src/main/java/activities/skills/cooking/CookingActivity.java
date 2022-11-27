@@ -4,6 +4,7 @@ import activities.activity.Activity;
 import activities.activity.ActivityType;
 import activities.banking.ItemReqBanking;
 import org.osbot.rs07.api.model.RS2Object;
+import org.osbot.rs07.event.Event;
 import org.osbot.rs07.event.WebWalkEvent;
 import org.osbot.rs07.utility.Condition;
 import util.Sleep;
@@ -15,28 +16,28 @@ public class CookingActivity extends Activity {
     private final CookingItem cookingItem;
     private final CookingLocation cookingLocation;
     private final Executable bankNode;
+    private Condition condition = new Condition() {
+        @Override
+        public boolean evaluate() {
+            return getInteractionHelper().canInteract(getCookingObject());
+        }
+    };
 
     public CookingActivity(final CookingItem cookingItem, final CookingLocation cookingLocation) {
         super(ActivityType.COOKING);
         this.cookingItem = cookingItem;
         this.cookingLocation = cookingLocation;
-        bankNode = new ItemReqBanking(cookingItem.itemReqs);
+        bankNode = new ItemReqBanking(this, cookingItem.itemReqs);
     }
 
     @Override
     public void runActivity() throws InterruptedException {
+        logger.debug("Starting Cooking Activity");
         if (ItemReq.hasItemRequirements(cookingItem.itemReqs, getInventory())) {
-            if (!cookingLocation.location.getArea().contains(myPosition())) {
-                WebWalkEvent webWalkEvent = new WebWalkEvent(cookingLocation.location.getArea());
-                webWalkEvent.setBreakCondition(new Condition() {
-                    @Override
-                    public boolean evaluate() {
-                        return getInteractionHelper().canInteract(getCookingObject());
-                    }
-                });
-                execute(webWalkEvent);
-            } else {
+            if (runTo(cookingLocation.location.getArea(), condition)) {
                 cook();
+            } else {
+                isComplete = true;
             }
         } else {
             execute(bankNode);
@@ -45,8 +46,9 @@ public class CookingActivity extends Activity {
 
     private void cook() throws InterruptedException {
         if (getMakeAllInterface().isOpen()) {
-            getMakeAllInterface().makeAll(1);
-            Sleep.sleepUntil(() -> getDialogues().isPendingContinuation() || !ItemReq.hasItemRequirements(cookingItem.itemReqs, getInventory()), 90_000);
+            getMakeAllInterface().makeAll(cookingItem.name);
+//            getMakeAllInterface().makeAll(1);
+            Sleep.sleepUntil(() -> getDialogues().isPendingContinuation() || !ItemReq.hasItemRequirements(cookingItem.itemReqs, getInventory()), 90000);
         } else if (!cookingItem.toString().equals(getInventory().getSelectedItemName())) {
             getInventory().use(cookingItem.toString());
         } else if (getCookingObject().interact("Use")) {
@@ -55,7 +57,7 @@ public class CookingActivity extends Activity {
     }
 
     private RS2Object getCookingObject() {
-        return getObjects().closest(cookingLocation.cookingObject.toString());
+        return getObjects().closestThatContains("Range", "Cooking range", "Stove", "Fire");
     }
 
     @Override

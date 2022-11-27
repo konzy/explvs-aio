@@ -1,5 +1,9 @@
 package activities.skills.magic;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public enum Staff {
     STAFF_OF_AIR("Staff of air", Rune.AIR),
     STAFF_OF_WATER("Staff of water", Rune.WATER),
@@ -17,8 +21,8 @@ public enum Staff {
     MIST_BATTLESTAFF("Mist battlestaff", Rune.WATER, Rune.AIR),
     DUST_BATTLESTAFF("Dust battlestaff", Rune.EARTH, Rune.AIR);
 
-    private String name;
-    private Rune[] runes;
+    String name;
+    Rune[] runes;
 
     Staff(final String name, final Rune... runes) {
         this.name = name;
@@ -31,6 +35,12 @@ public enum Staff {
 
     public Rune[] getRunes() {
         return runes;
+    }
+
+    public static Stream<Staff> getStavesByRune(Rune rune) {
+        return Arrays.stream(Staff.values())
+                .filter(staff -> Arrays.stream(staff.runes)
+                        .anyMatch(r -> r.name().equals(rune.name())));
     }
 
     @Override

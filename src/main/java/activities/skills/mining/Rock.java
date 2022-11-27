@@ -2,9 +2,12 @@ package activities.skills.mining;
 
 import org.osbot.rs07.api.filter.Filter;
 import org.osbot.rs07.api.model.Entity;
+import org.osbot.rs07.api.model.Player;
 import org.osbot.rs07.api.model.RS2Object;
 import org.osbot.rs07.script.MethodProvider;
 
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public enum Rock {
@@ -21,20 +24,69 @@ public enum Rock {
     RUNITE(new short[]{-31437}, "Runite ore"),
     RUNE_ESSENCE(null, "Rune essence");
 
-    public String ORE;
-    public short[] COLOURS;
+    public String oreName;
+    public short[] colours;
 
-    Rock(final short[] COLOURS, final String ORE) {
-        this.COLOURS = COLOURS;
-        this.ORE = ORE;
+    Random random = new Random();
+
+    Rock(final short[] colours, final String oreName) {
+        this.colours = colours;
+        this.oreName = oreName;
     }
 
     public RS2Object getClosestWithOre(final MethodProvider methods, final Filter<RS2Object>... filters) {
         //noinspection unchecked
-        return methods.getObjects().closest(
+        int rand = random.nextInt(100);
+        if (rand > 90) {
+            List<RS2Object> ores = methods.getObjects().getAll().stream()
+                    .filter(obj -> Stream.of(filters).allMatch(f -> f.match(obj))
+                            && hasOre(obj)).collect(Collectors.toList());
+            Collections.shuffle(ores);
+            return ores.get(0);
+        }
+
+        RS2Object courteousRock = methods.getObjects().closest(
                 obj -> Stream.of(filters).allMatch(f -> f.match(obj))
                         && hasOre(obj)
+                        && distanceFromAnotherPlayer(methods, obj) > 1
         );
+
+        if (courteousRock == null) {
+            return methods.getObjects().closest(
+                    obj -> Stream.of(filters).allMatch(f -> f.match(obj))
+                            && hasOre(obj)
+            );
+        }
+
+        return courteousRock;
+    }
+
+    public double distanceFromAnotherPlayer(final MethodProvider methods, RS2Object ore) {
+        int distance = 100;
+        Player myPlayer = methods.myPlayer();
+        for (Player player : methods.getPlayers().getAll()) {
+            if (!player.equals(myPlayer)) {
+                int tempDistance = player.getPosition().distance(ore.getPosition());
+                distance = Math.min(distance, tempDistance);
+            }
+        }
+        return distance;
+    }
+
+
+    public static List<String> allOreNames() {
+        return Arrays.stream(values()).map(rock -> rock.oreName).collect(Collectors.toList());
+    }
+
+    public static String[] allOreNamesArray() {
+        Object[] arr = Rock.allOreNames().toArray();
+
+        String[] ores = new String[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            ores[i] = (String)arr[i];
+        }
+
+        return ores;
     }
 
     public boolean hasOre(final Entity rockEntity) {
@@ -48,7 +100,7 @@ public enum Rock {
             return false;
         }
 
-        for (short rockColour : this.COLOURS) {
+        for (short rockColour : this.colours) {
             for (short entityColour : colours) {
                 if (rockColour == entityColour) {
                     return true;

@@ -81,7 +81,7 @@ public class TheRestlessGhost extends QuestActivity {
                     // Make sure we are not in the cut scene
                     if (!Tab.INVENTORY.isDisabled(bot)) {
                         Sleep.sleepUntil(() -> getWidgets().getWidgetContainingText("You have completed the Restless Ghost Quest!").isVisible(), 15000, 1000);
-
+                        getWidgets().closeOpenInterface(); // quest complete
                         log("Quest is complete");
                         shouldExit = true;
                         isComplete = true;

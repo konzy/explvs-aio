@@ -7,7 +7,7 @@ public class ResourceTask extends Task {
     private final String resource;
     private final int targetQuantity;
     private long quantityObtained;
-    private long prevInvcount;
+    private long prevInvCount;
 
     public ResourceTask(final Activity activity, final String resource, final int targetQuantity) {
         super(TaskType.RESOURCE, activity);
@@ -18,19 +18,19 @@ public class ResourceTask extends Task {
     @Override
     public void onStart() throws InterruptedException {
         super.onStart();
-        prevInvcount = getInventory().getAmount(resource);
+        prevInvCount = getInventory().getAmount(resource);
     }
 
     @Override
     public boolean isComplete() {
-        return quantityObtained >= targetQuantity;
+        return quantityObtained >= targetQuantity || activity.isComplete;
     }
 
     @Override
     public void run() throws InterruptedException {
         long invCount = getInventory().getAmount(resource);
-        if (invCount > prevInvcount) quantityObtained += invCount - prevInvcount;
-        prevInvcount = invCount;
+        if (invCount > prevInvCount) quantityObtained += invCount - prevInvCount;
+        prevInvCount = invCount;
         super.run();
     }
 

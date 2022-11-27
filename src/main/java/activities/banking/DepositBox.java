@@ -24,6 +24,7 @@ public enum DepositBox {
         return false;
     }
 
+    public static Position[] POSITIONS = Arrays.stream(AREAS).map(Area::getRandomPosition).toArray(Position[]::new);
 
     @Override
     public String toString() {

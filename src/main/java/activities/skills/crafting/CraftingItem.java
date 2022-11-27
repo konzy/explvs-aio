@@ -99,7 +99,7 @@ public enum CraftingItem {
     DRAGONSTONE_NECKLACE("Dragonstone necklace", "Necklaces", 6, CraftingType.JEWELLERY, 72, 105, new ItemReq("Necklace mould"), CraftingConstants.GOLD_BAR, new ItemReq("Dragonstone", 1)),
     ONYX_NECKLACE("Onyx necklace", "Necklaces", 7, CraftingType.JEWELLERY, 82, 120, new ItemReq("Necklace mould"), CraftingConstants.GOLD_BAR, new ItemReq("Onyx", 1)),
 
-    GOLD_BRACELET("Gold bracelet", "Bracelets", 1, CraftingType.JEWELLERY, 7, 25, CraftingConstants.BRACELET_MOULD, CraftingConstants.GOLD_BAR),
+    GOLD_BRACELET("Gold bracelet", "Bracelets", 0, CraftingType.JEWELLERY, 7, 25, CraftingConstants.BRACELET_MOULD, CraftingConstants.GOLD_BAR),
     SAPPHIRE_BRACELET("Sapphire bracelet", "Bracelets", 2, CraftingType.JEWELLERY, 23, 60, CraftingConstants.BRACELET_MOULD, CraftingConstants.GOLD_BAR, new ItemReq("Sapphire", 1)),
     EMERALD_BRACELET("Emerald bracelet", "Bracelets", 3, CraftingType.JEWELLERY, 30, 65, CraftingConstants.BRACELET_MOULD, CraftingConstants.GOLD_BAR, new ItemReq("Emerald", 1)),
     RUBY_BRACELET("Ruby bracelet", "Bracelets", 4, CraftingType.JEWELLERY, 42, 80, CraftingConstants.BRACELET_MOULD, CraftingConstants.GOLD_BAR, new ItemReq("Ruby", 1)),

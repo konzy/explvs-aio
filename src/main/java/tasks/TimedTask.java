@@ -32,6 +32,8 @@ public class TimedTask extends Task {
 
     @Override
     public boolean isComplete() {
+        if (activity.isComplete) return true;
+
         if (!isStarted) {
             return false;
         }

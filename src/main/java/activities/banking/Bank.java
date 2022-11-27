@@ -8,8 +8,8 @@ import java.util.Arrays;
 
 public enum Bank {
 
-    LUMBRIDGE_CASTLE(new Location("Lumbridge Castle", new Area(3207, 3220, 3209, 3216).setPlane(2))),
-    DRAYNOR(new Location("Draynor", new Area(3087, 3248, 3098, 3239))),
+    LUMBRIDGE_CASTLE(new Location("Lumbridge Castle", new Area(3207, 3217, 3210, 3220).setPlane(2))),
+    DRAYNOR(new Location("Draynor", new Area(3092, 3240, 3097, 3246))),
     DUEL_ARENA(new Location("Duel Arena", new Area(
             new int[][]{
                     {3380, 3267},
@@ -20,27 +20,26 @@ public enum Bank {
                     {3385, 3267}
             }
     ))),
-    AL_KHARID(new Location("Al-Kharid", new Area(3265, 3161, 3272, 3173))),
-    SHANTAY_PASS(new Location("Shantay Pass", new Area(3303, 3128, 3308, 3119))),
+    BLAST_FURNACE(new Location("Blast Furnace", new Area(1944, 4956, 1951, 4959))),
+    AL_KHARID(new Location("Al-Kharid", new Area(3269, 3161, 3272, 3173))),
+//    SHANTAY_PASS(new Location("Shantay Pass", new Area(3303, 3128, 3308, 3119))),
     CLAN_WARS(new Location("Clan Wars", new Area(3362, 3173, 3372, 3168))),
     CANIFIS(new Location("Canifis", new Area(3509, 3484, 3513, 3474))),
     GRAND_EXCHANGE(new Location("Grand Exchange", new Area(3159, 3495, 3170, 3485))),
     VARROCK_WEST(new Location("Varrock West", new Area(3180, 3433, 3185, 3447))),
     VARROCK_EAST(new Location("Varrock East", new Area(3250, 3419, 3257, 3423))),
-    EDGEVILLE(new Location("Edgeville", new Area(3092, 3499, 3098, 3489))),
-    FALADOR_WEST(new Location("Falador West", new Area(
+    EDGEVILLE(new Location("Edgeville", new Area(
             new int[][]{
-                    {2945, 3366},
-                    {2945, 3368},
-                    {2943, 3368},
-                    {2943, 3374},
-                    {2948, 3374},
-                    {2948, 3369},
-                    {2950, 3369},
-                    {2950, 3366}
+                    { 3092, 3488 },
+                    { 3092, 3499 },
+                    { 3098, 3499 },
+                    { 3098, 3493 },
+                    { 3095, 3493 },
+                    { 3095, 3488 }
             }
     ))),
-    FALADOR_EAST(new Location("Falador East", new Area(3009, 3359, 3018, 3355))),
+    FALADOR_WEST(new Location("Falador West", new Area(3180, 3433, 3185, 3446))),
+    FALADOR_EAST(new Location("Falador East", new Area(3250, 3419, 3257, 3424))),
     PORT_KHAZARD(new Location("Port Khazard", new Area(2660, 3163, 2664, 3160))),
     YANILLE(new Location("Yanille", new Area(2609, 3088, 2615, 3098))),
     CASTLE_WARS(new Location("Castle Wars", new Area(2441, 3088, 2445, 3082))),
@@ -74,9 +73,14 @@ public enum Bank {
     ZEAH(new Location("Zeah", new Area(1519, 3742, 1534, 3735))),
     ZEAH_LOVAKITE_MINE(new Location("Zeah Lovakite Mine", new Area(1433, 3836, 1441, 3821)));
 
+    public static Bank[] FREE_BANK_AREAS = {LUMBRIDGE_CASTLE, DRAYNOR, AL_KHARID, DUEL_ARENA, CLAN_WARS, GRAND_EXCHANGE,
+            VARROCK_EAST, VARROCK_WEST, EDGEVILLE, FALADOR_EAST, FALADOR_WEST};
+
     public Location location;
 
     public static Area[] AREAS = Arrays.stream(Bank.values()).map(bank -> bank.location.getArea()).toArray(Area[]::new);
+
+    public static Position[] POSITIONS = Arrays.stream(AREAS).map(Area::getRandomPosition).toArray(Position[]::new);
 
     Bank(final Location location) {
         this.location = location;

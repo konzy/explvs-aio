@@ -11,6 +11,7 @@ import util.Sleep;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 enum Rock {
 
@@ -60,11 +61,6 @@ public final class MiningSection extends TutorialSection {
 
     @Override
     public final void run() throws InterruptedException {
-        if (pendingContinue()) {
-            selectContinue();
-            return;
-        }
-
         switch (getProgress()) {
             case 260:
                 if (getWalking().walkPath(PATH_TO_SMITH_AREA)) {

@@ -11,7 +11,7 @@ import util.Sleep;
 import util.executable.ExecutionFailedException;
 
 public class SheepShearer extends QuestActivity {
-
+    Area area = new Area(3184, 3270, 3192, 3277);
     private static final Area FARMER_AREA = new Area(3188, 3275, 3190, 3270);
     private static final Area SHEEP_AREA = new Area(3195, 3272, 3209, 3260);
     private static final Area SPINNER_AREA = new Area(3209, 3215, 3211, 3212).setPlane(1);
@@ -49,16 +49,19 @@ public class SheepShearer extends QuestActivity {
         } else {
             switch (getProgress()) {
                 case 0:
+                    setStatus("Talking To Farmer");
                     execute(farmerDialogueCompleter);
                     break;
                 case 1:
                     if (hasRequiredItems()) {
+                        setStatus("Turning In Items");
                         execute(farmerDialogueCompleter);
                     } else {
                         getItemsNeeded();
                     }
                     break;
                 case 21:
+                    getWidgets().closeOpenInterface(); // quest complete
                     log("Quest is complete");
                     isComplete = true;
                     break;
@@ -74,10 +77,13 @@ public class SheepShearer extends QuestActivity {
 
     private void getItemsNeeded() throws InterruptedException {
         if (!getInventory().contains("Shears")) {
+            setStatus("Getting Shears");
             pickupShears();
         } else if (!getInventory().contains("Ball of wool") && getInventory().getAmount("Wool") < 20) {
+            setStatus("Shearing Sheep");
             shearSheep();
         } else if (getInventory().getAmount("Ball of wool") < 20) {
+            setStatus("Spinning Wool");
             spinWool();
         }
     }

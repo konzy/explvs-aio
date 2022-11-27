@@ -2,19 +2,23 @@ package activities.skills.woodcutting;
 
 import activities.activity.Activity;
 import activities.activity.ActivityType;
-import activities.banking.DepositAllBanking;
-import activities.banking.ToolUpgradeBanking;
+import activities.banking.MyToolUpgradeBanking;
 import org.osbot.rs07.api.filter.AreaFilter;
 import org.osbot.rs07.api.filter.NameFilter;
 import org.osbot.rs07.api.model.Entity;
 import org.osbot.rs07.api.model.GroundItem;
-import org.osbot.rs07.api.ui.EquipmentSlot;
+import org.osbot.rs07.api.model.Item;
+import org.osbot.rs07.api.ui.Skill;
 import util.Location;
 import util.ResourceMode;
 import util.Sleep;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.Random;
+import java.util.stream.Stream;
 
 public class WoodcuttingActivity extends Activity {
 
@@ -23,11 +27,9 @@ public class WoodcuttingActivity extends Activity {
     private final Location treeLocation;
     private final ResourceMode resourceMode;
     private final Random random = new Random();
-    private DepositAllBanking depositAllBanking;
-    private ToolUpgradeBanking<Axe> axeBanking;
+    private final MyToolUpgradeBanking axeBanking = new MyToolUpgradeBanking(new AxeUpgrade(this));
     private Entity targetTree;
     private Entity nextTree;
-    private GroundItem birdsNest;
 
     public WoodcuttingActivity(final Tree tree, final Location treeLocation, final ResourceMode resourceMode) {
         super(ActivityType.WOODCUTTING);
@@ -38,60 +40,63 @@ public class WoodcuttingActivity extends Activity {
 
     @Override
     public void onStart() throws InterruptedException {
-        depositAllBanking = new DepositAllBanking();
-
-        axeBanking = new ToolUpgradeBanking<>(Axe.class);
-
-        if (axeBanking.getCurrentTool() != null) {
-            depositAllBanking.setExceptItems(axeBanking.getCurrentTool().name);
-        }
+        super.onStart();
     }
 
     @Override
     public void runActivity() throws InterruptedException {
-        if (inventoryContainsNonWcItem() || (getInventory().isFull() && resourceMode == ResourceMode.BANK)) {
-            execute(depositAllBanking);
-        } else if (axeBanking.toolUpgradeAvailable()) {
+        if (getSkills().getStatic(Skill.WOODCUTTING) < tree.reqLevel) {
+            logger.info("not lvl req");
+            isComplete = true;
+            return;
+        }
+        GroundItem birdsNest;// = getGroundItems().closest(BIRDS_NEST);
+        if (!axeBanking.haveRequirements()) {
+            logger.debug("We don't have an axe, getting one.");
             execute(axeBanking);
-            if (axeBanking.getCurrentTool() != null) {
-                depositAllBanking.setExceptItems(axeBanking.getCurrentTool().getName());
-            }
-        } else if (axeBanking.getCurrentTool().canEquip(getSkills()) &&
-                !getEquipment().isWearingItem(EquipmentSlot.WEAPON, axeBanking.getCurrentTool().getName())) {
-            getInventory().equip(axeBanking.getCurrentTool().getName());
+        } else if (nonWoodItems() > 14) {
+            logger.debug("We have a pretty full inventory, banking");
+            execute(axeBanking);
+        } else if (getInventory().isFull() && resourceMode == ResourceMode.BANK) { // regular banking
+            logger.debug("We have a full inventory, banking");
+            execute(axeBanking);
+        } else if(axeBanking.haveRequirements() &&
+                axeBanking.bestToolOnPerson().canEquip(getSkills()) &&
+                getInventory().contains(axeBanking.bestToolOnPerson().getName())) {
+            getInventory().equip(axeBanking.bestToolOnPerson().getName());
+            sleep(random(500, 1000));
+            if(!getInventory().isEmpty())
+                execute(axeBanking);
         } else if (getInventory().isFull() && resourceMode == ResourceMode.DROP) {
-            getInventory().dropAllExcept(axeBanking.getCurrentTool().getName());
+            dropAllExcept(axeBanking.bestToolOnPerson().getName());
         } else if (!treeLocation.getArea().contains(myPosition())) {
-            getWalking().webWalk(treeLocation.getArea());
-        } else if ((birdsNest = getGroundItems().closest(BIRDS_NEST)) != null) {
-            getGroundItems().take(birdsNest);
+            getWalking().webWalk(treeLocation.getArea().getRandomPosition());
+        } else if ((birdsNest = getGroundItems().closest(BIRDS_NEST)) != null && resourceMode == ResourceMode.BANK ) {
+            birdsNest.interact("Take");
         } else if (!myPlayer().isAnimating() || (targetTree != null && !targetTree.exists())) {
             chopTree();
         } else if (nextTree == null || nextTree == targetTree){
             nextTree = getNextTree();
-
-            // Hover the next tree sometimes
-            if (random.nextBoolean()) {
+            if (nextTree != null && random.nextBoolean()) {
                 nextTree.hover();
             }
         }
     }
 
-    private boolean inventoryContainsNonWcItem() {
-        return getInventory().contains(item -> {
-            if (axeBanking.getCurrentTool() != null) {
-                if (item.getName().equals(axeBanking.getCurrentTool().getName())) {
-                    return false;
-                }
-            }
-            if (item.getName().equals(tree.logsName)) {
-                return false;
-            }
-            if (item.getName().equals(BIRDS_NEST)) {
-                return false;
-            }
-            return true;
-        });
+    private int nonWoodItems() {
+
+        long totalInventory = Arrays.stream(getInventory().getItems())
+                .filter(Objects::nonNull)
+                .count();
+        logger.debug("totalInventory=" + totalInventory);
+
+        long totalLogs = Arrays.stream(getInventory().getItems())
+                .filter(Objects::nonNull)
+                .filter(item -> Tree.allLogNames().contains(item.getName()))
+                .count();
+        logger.debug("totalLogs=" + totalLogs);
+
+        return (int)(totalLogs - totalInventory);
     }
 
     private void chopTree() {
@@ -105,11 +110,15 @@ public class WoodcuttingActivity extends Activity {
     }
 
     private Entity getNextTree() {
-        return getObjects().closest(
-                new AreaFilter<>(treeLocation.getArea()),
-                new NameFilter<>(tree.toString()),
-                obj -> obj != targetTree
-        );
+        if (targetTree != null){
+            return getObjects().closest(
+                    new AreaFilter<>(treeLocation.getArea()),
+                    new NameFilter<>(tree.toString()),
+                    obj -> obj != targetTree
+            );
+        } else {
+            return null;
+        }
     }
 
     @Override

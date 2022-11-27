@@ -15,7 +15,7 @@ public class GESellActivity extends GEActivity {
     public GESellActivity(final GEItem geItem) {
         this.geItem = geItem;
         depositAllBanking = new DepositAllBanking();
-        itemReqBanking = new ItemReqBanking(
+        itemReqBanking = new ItemReqBanking(this,
                 new ItemReq(geItem.getName(), 1, geItem.getQuantity()).setStackable().setNoted()
         );
     }

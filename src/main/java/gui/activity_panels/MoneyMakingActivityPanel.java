@@ -3,6 +3,9 @@ package gui.activity_panels;
 import activities.activity.Activity;
 import activities.money_making.MoneyMakingType;
 import activities.money_making.flax_picking.FlaxPickingActivity;
+import activities.money_making.idle.IdleActivity;
+import activities.money_making.leather_tanning.TannerActivity;
+import activities.money_making.shopping.ShoppingActivity;
 import gui.styled_components.StyledJComboBox;
 import gui.styled_components.StyledJLabel;
 import gui.styled_components.StyledJPanel;
@@ -34,6 +37,12 @@ public class MoneyMakingActivityPanel implements ActivityPanel {
         switch ((MoneyMakingType) typeSelector.getSelectedItem()) {
             case FLAX_PICKING:
                 return new FlaxPickingActivity();
+            case IDLING:
+                return new IdleActivity();
+            case TANNING:
+                return new TannerActivity();
+            case SHOPPING:
+                return new ShoppingActivity();
             case VIAL_FILLING:
                 return null;
         }

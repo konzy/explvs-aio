@@ -16,7 +16,7 @@ public class PotionMakingActivity extends Activity {
     public PotionMakingActivity(final Potion potion) {
         super(ActivityType.HERBLORE);
         this.potion = potion;
-        bankNode = new ItemReqBanking(potion.itemReqs);
+        bankNode = new ItemReqBanking(this, potion.itemReqs);
     }
 
     @Override
@@ -31,7 +31,8 @@ public class PotionMakingActivity extends Activity {
     private void makePotion() throws InterruptedException {
         if (getMakeAllInterface().isOpen()) {
             getMakeAllInterface().makeAll(1);
-            Sleep.sleepUntil(() -> !ItemReq.hasItemRequirements(potion.itemReqs, getInventory()) || getDialogues().isPendingContinuation(), 30_000);
+            Sleep.sleepUntil(() -> !ItemReq.hasItemRequirements(potion.itemReqs, getInventory()) || getDialogues().isPendingContinuation(), 60_000);
+            sleep(random(1000, 10000));
         } else if (potion.itemReqs[1].toString().equals(getInventory().getSelectedItemName())) {
             if (getInventory().getItem(potion.itemReqs[0].toString()).interact()) {
                 Sleep.sleepUntil(() -> getMakeAllInterface().isOpen(), 3000);

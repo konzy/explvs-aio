@@ -29,29 +29,17 @@ public class RuneEssMiningActivity extends MiningActivity {
     );
 
     public RuneEssMiningActivity(final ResourceMode resourceMode) {
-        super(null, Rock.RUNE_ESSENCE, resourceMode);
+        super(null, Rock.RUNE_ESSENCE, resourceMode, false);
         miningNode = new MiningNode();
     }
 
     @Override
     public void runActivity() throws InterruptedException {
-        if ((shouldBank() || pickaxeBanking.toolUpgradeAvailable()) && inEssenceMine()) {
+        if (getInventory().isFull()) {
             leaveEssenceMine();
         } else {
             super.runActivity();
         }
-    }
-
-    @Override
-    protected boolean inventoryContainsNonMiningItem() {
-        return getInventory().contains(item -> {
-            if (pickaxeBanking.getCurrentTool() != null) {
-                if (item.getName().equals(pickaxeBanking.getCurrentTool().getName())) {
-                    return false;
-                }
-            }
-            return !item.getName().endsWith("essence");
-        });
     }
 
     private boolean inEssenceMine() {

@@ -12,6 +12,7 @@ import paint.MouseTrail;
 import paint.Paint;
 import tasks.Task;
 import tasks.TutorialIslandTask;
+import tasks.break_task.BreakTask;
 import tasks.task_executor.TaskExecutor;
 import util.custom_method_provider.CustomMethodProvider;
 import util.event.ConfigureClientEvent;
@@ -42,24 +43,24 @@ public class AIO extends Script {
         customMethodProvider.init(bot);
 
         log("Current version: " + AIO.VERSION);
-        log("Latest version: " + VersionChecker.getLatestVersion().orElse("not found!"));
-
-        if (!VersionChecker.updateIsIgnored() && !VersionChecker.isUpToDate(AIO.VERSION)) {
-            try {
-                EventDispatchThreadRunner.runOnDispatchThread(
-                        () -> {
-                            int selectedOption = NewVersionDialog.showNewVersionDialog(getBot().getBotPanel());
-
-                            if (selectedOption == 0) {
-                                VersionChecker.ignoreUpdate();
-                            }
-                        },
-                        true
-                );
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
-        }
+//        log("Latest version: " + VersionChecker.getLatestVersion().orElse("not found!"));
+//
+//        if (!VersionChecker.updateIsIgnored() && !VersionChecker.isUpToDate(AIO.VERSION)) {
+//            try {
+//                EventDispatchThreadRunner.runOnDispatchThread(
+//                        () -> {
+//                            int selectedOption = NewVersionDialog.showNewVersionDialog(getBot().getBotPanel());
+//
+//                            if (selectedOption == 0) {
+//                                VersionChecker.ignoreUpdate();
+//                            }
+//                        },
+//                        true
+//                );
+//            } catch (InvocationTargetException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
         List<Task> tasks;
 
@@ -69,11 +70,7 @@ public class AIO extends Script {
             tasks = loadTasksFromGUI();
         }
 
-        if (tasks.isEmpty()) {
-            log("No tasks loaded");
-            stop(false);
-            return;
-        }
+//        tasks.add(new BreakTask(random(15_000, 30_000), false));
 
         taskExecutor = new TaskExecutor(tasks);
         taskExecutor.exchangeContext(getBot(), customMethodProvider);
@@ -148,7 +145,11 @@ public class AIO extends Script {
         } else {
             customMethodProvider.execute(taskExecutor);
         }
-        return random(200, 300);
+        int delay = 0;
+        if(!getBot().isMirrorMode()) {
+            delay = getRecommendedMirrorReactionTime();
+        }
+        return delay + random(100, 250);
     }
 
     private boolean osrsClientIsConfigurable() {
@@ -157,11 +158,21 @@ public class AIO extends Script {
                 !myPlayer().isAnimating() &&
                 taskExecutor.getCurrentTask() != null &&
                 !(taskExecutor.getCurrentTask() instanceof TutorialIslandTask) &&
-                getNpcs().closest("Lumbridge Guide") == null;
+                getNpcs().closest("Adventurer Jon") == null;
     }
 
     private void configureOSRSClient() throws InterruptedException {
         customMethodProvider.execute(new ConfigureClientEvent());
+    }
+
+    @Override
+    public int getRecommendedMirrorReactionTime() {
+        return 150;
+    }
+
+    @Override
+    public int getRecommendedMirrorFps() {
+        return 20;
     }
 
     @Override

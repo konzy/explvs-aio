@@ -7,6 +7,7 @@ import util.Sleep;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public final class QuestSection extends TutorialSection {
 
@@ -33,10 +34,6 @@ public final class QuestSection extends TutorialSection {
 
     @Override
     public final void run() throws InterruptedException {
-        if (pendingContinue()) {
-            selectContinue();
-            return;
-        }
         switch (getProgress()) {
             case 200:
                 boolean isRunning = getSettings().isRunning();

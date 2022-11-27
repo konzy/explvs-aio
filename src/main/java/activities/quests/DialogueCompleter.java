@@ -38,6 +38,7 @@ public class DialogueCompleter extends Executable {
 
     @Override
     public void run() throws InterruptedException {
+        sleep(random(300, 1000));
         NPC npc = getNpcs().closest(npcName);
 
         if (npc == null || !npc.isVisible()) {
@@ -59,12 +60,18 @@ public class DialogueCompleter extends Executable {
 
         if (!getMap().canReach(npc)) {
            getDoorHandler().handleNextObstacle(npc);
-        } else if (!getDialogues().inDialogue() || !myPlayer().isInteracting(npc)) {
+        } else if (!getDialogues().inDialogue()) {
+            logger.debug("inDialogue=" + getDialogues().inDialogue());
+//            logger.debug("isInteracting=" + myPlayer().isInteracting(npc));
             if (npc.interact("Talk-to")) {
                 Sleep.sleepUntil(() -> getDialogues().inDialogue() && myPlayer().isInteracting(npc), 5000);
             }
         } else {
-            getDialogues().completeDialogue(dialogueOptions);
+            if (getDialogues().isPendingContinuation()) {
+                getDialogues().clickContinue();
+            } else {
+                getDialogues().completeDialogue(dialogueOptions);
+            }
         }
     }
 }
